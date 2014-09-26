@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Altbaden - Bruchsal</title>
+    <link rel="icon" type="image/ico" href="favicon.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+    <link rel="stylesheet" href="/css/cover.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="site-wrapper">
+      <div class="site-wrapper-inner">
+        <div class="cover-container">
+          <div class="masthead clearfix">
+            <div class="inner">
+              <ul class="nav masthead-nav">
+                <li><a href="http://www.facebook.com/profile.php?id=196926384549"><img src="/img/facebook.png" /></a></li>
+                <li><a href="http://twitter.com/altbaden"><img src="/img/twitter.png" /></a></li>
+                <li><a href="http://www.youtube.com/user/SteffenZimm?sub_confirmation=1"><img src="/img/youtube.png" /></a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="inner cover">
+            <img src="http://altbaden-bruchsal.de/img/altbaden.png" />
+            <p id="description"></p>
+            <p id="hours"></p>
+            <p class="lead">
+              <a href="https://www.facebook.com/Altbaden" class="btn btn-lg btn-default">Mehr Infos</a>
+            </p>
+          </div>
+          <div class="mastfoot">
+            <div class="inner">
+              <p>supported by <a href="http://zauberstuhl.de">Zauberstuhl</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $.ajax({
+        type:"GET",
+        url: "https://graph.facebook.com/196926384549",
+        success: function(data) {
+          var day_name = {
+            "mon": "Montag",
+            "tue": "Dienstag",
+            "wed": "Mittwoch",
+            "thu": "Donnerstag",
+            "fri": "Freitag",
+            "sat": "Samstag",
+            "sun": "Sonntag"
+          };
+          var hours = data.hours;
+          var desc = data.description
+            .replace(/(\r\n|\n|\r)/gm,"<br />")
+            .replace(/ä/gm,"&auml;")
+            .replace(/ö/gm,"&ouml;")
+            .replace(/ü/gm,"&uuml;")
+            .replace(/ß/gm,"&szlig;");
+
+          $("#hours").html("<h3>&Ouml;ffnungszeiten:</h3>");
+          $.each(hours, function(k, v) {
+            if (k.indexOf("open") > -1) {
+              var day = k.substring(0, 3);
+              $("#hours").append(
+                day_name[day] + " von " + v + " bis " + hours[day + "_1_close"] + "<br />"
+              );
+            }
+          });
+
+          $("#description").html(desc);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {},
+        dataType: "jsonp"
+      });   
+    </script>
+  </body>
+</html>
